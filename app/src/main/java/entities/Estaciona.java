@@ -4,9 +4,6 @@
  */
 package entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Fernando
@@ -20,11 +17,11 @@ public class Estaciona {
     private String dtSaida;
     private String hsEntrada;
     private String hsSaida;
-    List<Patio> patios = new ArrayList<Patio>();
-    List<Veiculo> veiculos = new ArrayList<Veiculo>();
+    Patio patio;
+    Veiculo veiculo;
 
     public Estaciona(Integer cod, Integer Patio_num, String Veiculo_placa, String dtEntrada, String dtSaida,
-            String hsEntrada, String hsSaida, List<Patio> patios, List<Veiculo> veiculos) {
+            String hsEntrada, String hsSaida) {
         this.cod = cod;
         this.Patio_num = Patio_num;
         this.Veiculo_placa = Veiculo_placa;
@@ -32,8 +29,6 @@ public class Estaciona {
         this.dtSaida = dtSaida;
         this.hsEntrada = hsEntrada;
         this.hsSaida = hsSaida;
-        this.patios = patios;
-        this.veiculos = veiculos;
     }
 
     public Integer getCod() {
@@ -90,5 +85,28 @@ public class Estaciona {
 
     public void setHsSaida(String hsSaida) {
         this.hsSaida = hsSaida;
+    }
+
+    public void setPatio(Patio patio) {
+        this.patio = patio;
+    }
+
+    public Patio getPatio() {
+        return patio;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
+    }
+
+    public Veiculo getVeiculo() {
+        return veiculo;
+    }
+
+    @Override
+    public String toString() {
+        return "Estacionamento [cod=" + cod + ", Patio_num=" + Patio_num + ", Veiculo_placa=" + Veiculo_placa
+                + ", dtEntrada=" + dtEntrada + ", dtSaida=" + dtSaida + ", hsEntrada=" + hsEntrada + ", hsSaida="
+                + hsSaida + ", " + patio + ", " + veiculo + "]";
     }
 }

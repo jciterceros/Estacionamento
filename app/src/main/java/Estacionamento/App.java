@@ -3,13 +3,26 @@
  */
 package Estacionamento;
 
+import database.CleanService;
 import database.DatabaseConfig;
 import database.DatabaseManager;
-import java.sql.SQLException;
+import database.seeds.SeedsCliente;
+import database.seeds.SeedsEstaciona;
+import database.seeds.SeedsModelo;
+import database.seeds.SeedsPatio;
+import database.seeds.SeedsVeiculo;
+import entities.Cliente;
+import entities.Estaciona;
+import entities.Modelo;
+import entities.Patio;
+import entities.Veiculo;
 
-import services.CleanService;
+import java.sql.SQLException;
+import java.util.List;
+
 import services.ClienteService;
 import services.EstacionaService;
+import services.LoadService;
 import services.ModeloService;
 import services.PatioService;
 import services.VeiculoService;
@@ -35,177 +48,66 @@ public class App {
 
         // Inicialização do serviço Cliente
         ClienteService clienteService = new ClienteService(dbManager);
-
-        // Deletar tabela de Cliente
-        // clienteService.deletarTabelaCliente();
-
-        // Criar tabela de Cliente
-        clienteService.criarTabelaCliente();
-
-        // Deletar Todos os Clientes
-        clienteService.deletarTodosClientes();
-
-        // Inserir Cliente
-        clienteService.inserirCliente(33351745001L, "Fernando", "1990-01-01");
-        clienteService.inserirCliente(33351745002L, "Maria", "1991-01-01");
-        clienteService.inserirCliente(33351745003L, "Joao", "1992-01-01");
-        clienteService.inserirCliente(33351745004L, "Jose", "1993-01-01");
-        clienteService.inserirCliente(33351745005L, "Ana", "1994-01-01");
-        clienteService.inserirCliente(33351745006L, "Paulo", "1995-01-01");
-        clienteService.inserirCliente(33351745007L, "Pedro", "1996-01-01");
-        clienteService.inserirCliente(33351745008L, "Lucas", "1997-01-01");
-        clienteService.inserirCliente(33351745009L, "Marcos", "1998-01-01");
-        clienteService.inserirCliente(33351745010L, "Lucia", "1999-01-01");
-
-        // Listar produtos
-        clienteService.listarClientes();
-
-        // Deletar Cliente por ID
-        clienteService.deletarClienteByCPF(33351745001L);
-
-        // Atualizar Cliente
-        clienteService.atualizarCliente(33351745002L, "Maria Silva", "1991-01-01");
-
-        // Listar produtos
-        clienteService.listarClientes();
+        SeedsCliente seedsCliente = new SeedsCliente(clienteService);
 
         // Inicialização do serviço Modelo
         ModeloService modeloService = new ModeloService(dbManager);
-
-        // Deletar tabela de Modelo
-        // modeloService.deletarTabelaModelo();
-
-        // Criar tabela de Modelo
-        modeloService.criarTabelaModelo();
-
-        // Deletar Todos os Modelos
-        modeloService.deletarTodosModelos();
-
-        // Inserir Modelo
-        modeloService.inserirModelo(1, "Fusca");
-        modeloService.inserirModelo(2, "Gol");
-        modeloService.inserirModelo(3, "Palio");
-        modeloService.inserirModelo(4, "Uno");
-        modeloService.inserirModelo(5, "Celta");
-        modeloService.inserirModelo(6, "Corsa");
-        modeloService.inserirModelo(7, "Onix");
-        modeloService.inserirModelo(8, "Prisma");
-        modeloService.inserirModelo(9, "Civic");
-        modeloService.inserirModelo(10, "Corolla");
-
-        // Listar modelos
-        modeloService.listarModelos();
-
-        // Deletar Modelo pelo Código
-        modeloService.deletarModeloByCod(1);
-
-        // Atualizar Modelo
-        modeloService.atualizarModelo(2, "Gol G5");
-
-        // Listar modelos
-        modeloService.listarModelos();
+        SeedsModelo seedsModelo = new SeedsModelo(modeloService);
 
         // Inicialização do serviço Patio
         PatioService patioService = new PatioService(dbManager);
+        SeedsPatio seedsPatio = new SeedsPatio(patioService);
 
-        // Deletar tabela de Patio
-        // patioService.deletarTabelaPatio();
-
-        // Criar tabela de Patio
-        patioService.criarTabelaPatio();
-
-        // Deletar Todos os Patios
-        patioService.deletarTodosPatios();
-
-        // Inserir Patio
-        patioService.inserirPatio(1, "Rua 1", 10);
-        patioService.inserirPatio(2, "Rua 2", 20);
-        patioService.inserirPatio(3, "Rua 3", 30);
-        patioService.inserirPatio(4, "Rua 4", 40);
-        patioService.inserirPatio(5, "Rua 5", 50);
-        patioService.inserirPatio(6, "Rua 6", 60);
-        patioService.inserirPatio(7, "Rua 7", 70);
-        patioService.inserirPatio(8, "Rua 8", 80);
-        patioService.inserirPatio(9, "Rua 9", 90);
-        patioService.inserirPatio(10, "Rua 10", 100);
-
-        // Listar patios
-        patioService.listarPatios();
-
-        // Deletar Patio pelo Número
-        patioService.deletarPatioByNum(1);
-
-        // Atualizar Patio
-        patioService.atualizarPatio(2, "Rua 2", 25);
-
-        // Listar patios
-        patioService.listarPatios();
-
-        // Inicialização do serviço Patio
+        // Inicialização do serviço Veiculo
         VeiculoService veiculoService = new VeiculoService(dbManager);
+        SeedsVeiculo seedsVeiculo = new SeedsVeiculo(veiculoService);
 
-        // Deletar tabela de Veiculo
-        // veiculoService.deletarTabelaVeiculo();
-
-        // Criar tabela de Veiculo
-        veiculoService.criarTabelaVeiculo();
-
-        // Inserir Veiculo
-        veiculoService.inserirVeiculo("ABC1234", 2, 33351745002L, "Preto");
-        veiculoService.inserirVeiculo("DEF5678", 2, 33351745002L, "Branco");
-        veiculoService.inserirVeiculo("GHI9012", 2, 33351745002L, "Vermelho");
-        veiculoService.inserirVeiculo("JKL3456", 2, 33351745002L, "Azul");
-        veiculoService.inserirVeiculo("MNO7890", 2, 33351745002L, "Verde");
-        veiculoService.inserirVeiculo("PQR1234", 2, 33351745002L, "Amarelo");
-        veiculoService.inserirVeiculo("STU5678", 2, 33351745002L, "Rosa");
-        veiculoService.inserirVeiculo("VWX9012", 2, 33351745002L, "Roxo");
-        veiculoService.inserirVeiculo("YZA3456", 2, 33351745002L, "Laranja");
-        veiculoService.inserirVeiculo("BCD7890", 2, 33351745002L, "Cinza");
-
-        // Listar veiculos
-        veiculoService.listarVeiculos();
-
-        // Deletar Veiculo pela Placa
-        veiculoService.deletarVeiculoByPlaca("ABC1234");
-
-        // Atualizar Veiculo
-        veiculoService.atualizarVeiculo("DEF5678", 2, 33351745002L, "Branco");
-
-        // Listar veiculos
-        veiculoService.listarVeiculos();
-
-        // Inicialização do serviço Patio
+        // Inicialização do serviço Estacionamento
         EstacionaService estacionaService = new EstacionaService(dbManager);
+        SeedsEstaciona seedsEstaciona = new SeedsEstaciona(estacionaService);
 
-        // Deletar tabela de Estaciona
-        // estacionaService.deletarTabelaEstaciona();
+        LoadService loadService = new LoadService(dbManager);
 
-        // Criar tabela de Estaciona
-        estacionaService.criarTabelaEstaciona();
+        // Carregando dados dos Clientes direto do banco de dados utilizando LoadService
+        List<Cliente> clientes = null;
+        clientes = loadService.loadClientes();
 
-        // Inserir Estaciona
-        estacionaService.inserirEstaciona(1, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(2, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(3, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(4, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(5, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(6, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(7, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(8, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(9, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
-        estacionaService.inserirEstaciona(10, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "12:00:00");
+        clientes.forEach(cliente -> {
+            System.out.println(cliente);
+        });
 
-        // Listar estacionas
-        estacionaService.listarEstaciona();
+        // Carregando dados dos Modelos direto do banco de dados utilizando LoadService
+        List<Modelo> modelos = null;
+        modelos = loadService.loadModelos();
 
-        // Deletar Estaciona pelo Código
-        estacionaService.deletarEstacionaByCod(1);
+        modelos.forEach(modelo -> {
+            System.out.println(modelo);
+        });
 
-        // Atualizar Estaciona
-        estacionaService.atualizarEstaciona(2, 2, "DEF5678", "2021-01-01", "2021-01-01", "10:00:00", "15:00:00");
+        // Carregar dados dos Patios direto do banco de dados utilizando LoadService
+        List<Patio> patios = null;
+        patios = loadService.loadPatios();
 
-        // Listar estacionas
-        estacionaService.listarEstaciona();
+        patios.forEach(patio -> {
+            System.out.println(patio);
+        });
+
+        // Carregar dados dos Veiculos direto do banco de dados utilizando LoadService
+        List<Veiculo> veiculos = null;
+        veiculos = loadService.loadVeiculos(clientes, modelos);
+
+        veiculos.forEach(veiculo -> {
+            System.out.println(veiculo);
+        });
+
+        // Carregar dados do Estacionamento direto do banco de dados utilizando
+        // LoadService
+        List<Estaciona> estacionamentos = null;
+        estacionamentos = loadService.loadEstaciona(veiculos, patios);
+
+        estacionamentos.forEach(estaciona -> {
+            System.out.println(estaciona);
+        });
 
         dbManager.disconnect();
         System.out.println("Saindo da aplicacao volte novamente...");

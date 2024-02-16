@@ -33,4 +33,9 @@ public class Modelo {
     public void setDesc_2(String Desc_2) {
         this.Desc_2 = Desc_2;
     }
+
+    @Override
+    public String toString() {
+        return "Modelo [codMod=" + codMod + ", Desc_2=" + Desc_2 + "]";
+    }
 }

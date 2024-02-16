@@ -1,6 +1,10 @@
-package services;
+package database;
 
-import database.DatabaseManager;
+import services.ClienteService;
+import services.EstacionaService;
+import services.ModeloService;
+import services.PatioService;
+import services.VeiculoService;
 
 public class CleanService {
 

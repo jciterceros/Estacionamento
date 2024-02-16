@@ -4,9 +4,6 @@
  */
 package entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Fernando
@@ -17,17 +14,14 @@ public class Veiculo {
     private Integer Modelo_codMod;
     private Long Cliente_cpf;
     private String cor;
-    List<Cliente> clientes = new ArrayList<Cliente>();
-    List<Modelo> modelos = new ArrayList<Modelo>();
+    Cliente cliente;
+    Modelo modelo;
 
-    public Veiculo(String placa, Integer Modelo_codMod, Long Cliente_cpf, String cor, List<Cliente> clientes,
-            List<Modelo> modelos) {
+    public Veiculo(String placa, Integer Modelo_codMod, Long Cliente_cpf, String cor) {
         this.placa = placa;
         this.Modelo_codMod = Modelo_codMod;
         this.Cliente_cpf = Cliente_cpf;
         this.cor = cor;
-        this.clientes = clientes;
-        this.modelos = modelos;
     }
 
     public String getPlaca() {
@@ -62,4 +56,25 @@ public class Veiculo {
         this.cor = cor;
     }
 
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setModelo(Modelo modelo) {
+        this.modelo = modelo;
+    }
+
+    public Modelo getModelo() {
+        return modelo;
+    }
+
+    @Override
+    public String toString() {
+        return "Veiculo [placa=" + placa + ", Modelo_codMod=" + Modelo_codMod + ", Cliente_cpf=" + Cliente_cpf
+                + ", cor=" + cor + ", " + cliente + ", " + modelo + "]";
+    }
 }

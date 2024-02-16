@@ -1,14 +1,10 @@
 package services;
 
 import database.DatabaseManager;
-import entities.Cliente;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ClienteService {
 
@@ -100,28 +96,6 @@ public class ClienteService {
 
                 System.out.println("CPF: " + cpf + ", Nome: " + nome + ", Data de Nascimento: " + dtNasc);
             }
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao executar a consulta SQL: " + ex.getMessage(), ex);
-        }
-    }
-
-    // Devolver Lista de Clientes para classe Clientes
-    public List<Cliente> loadClientes() throws SQLException {
-        List<Cliente> clientes = new ArrayList<Cliente>();
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("SELECT * FROM Cliente");
-
-            ResultSet resultSet = dbManager.executeQuery(querySQL.toString());
-            while (resultSet.next()) {
-                long cpf = resultSet.getLong("cpf");
-                String nome = resultSet.getString("nome");
-                Date dtNasc = resultSet.getDate("dtNasc");
-
-                Cliente cliente = new Cliente(cpf, nome, dtNasc);
-                clientes.add(cliente);
-            }
-            return clientes;
         } catch (SQLException ex) {
             throw new RuntimeException("Erro ao executar a consulta SQL: " + ex.getMessage(), ex);
         }

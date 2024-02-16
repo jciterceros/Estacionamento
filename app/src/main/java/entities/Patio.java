@@ -43,4 +43,9 @@ public class Patio {
     public void setCapacidade(Integer capacidade) {
         this.capacidade = capacidade;
     }
+
+    @Override
+    public String toString() {
+        return "Patio [num=" + num + ", ender=" + ender + ", capacidade=" + capacidade + "]";
+    }
 }

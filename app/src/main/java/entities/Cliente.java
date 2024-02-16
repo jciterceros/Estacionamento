@@ -45,4 +45,9 @@ public class Cliente {
     public void setDtNasc(Date dtNasc) {
         this.dtNasc = dtNasc;
     }
+
+    @Override
+    public String toString() {
+        return "Cliente [cpf=" + cpf + ", nome=" + nome + ", dtNasc=" + dtNasc + "]";
+    }
 }
