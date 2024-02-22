@@ -1,9 +1,9 @@
 package database.seeds;
 
-import services.ClienteService;
+import repositories.ClienteRepository;
 
 public class SeedsCliente {
-    public SeedsCliente(ClienteService clienteService) {
+    public SeedsCliente(ClienteRepository clienteService) {
         // Criar tabela de Cliente
         clienteService.criarTabelaCliente();
 

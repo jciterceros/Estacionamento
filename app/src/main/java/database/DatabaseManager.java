@@ -44,6 +44,14 @@ public class DatabaseManager {
         }
     }
 
+    public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Erro ao verificar se está conectado ao banco de dados: " + ex.getMessage(), ex);
+        }
+    }
+
     public ResultSet executeQuery(String query) throws SQLException {
         try {
             // return connection.createStatement().executeQuery(query);

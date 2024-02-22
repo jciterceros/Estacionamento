@@ -1,14 +1,14 @@
-package services;
+package repositories;
 
 import database.DatabaseManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class EstacionaService {
+public class EstacionaRepository {
 
     private DatabaseManager dbManager;
 
-    public EstacionaService(DatabaseManager dbManager) {
+    public EstacionaRepository(DatabaseManager dbManager) {
         this.dbManager = dbManager;
     }
 

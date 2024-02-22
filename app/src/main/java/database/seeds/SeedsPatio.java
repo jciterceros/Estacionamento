@@ -1,9 +1,9 @@
 package database.seeds;
 
-import services.PatioService;
+import repositories.PatioRepository;
 
 public class SeedsPatio {
-    public SeedsPatio(PatioService patioService) {
+    public SeedsPatio(PatioRepository patioService) {
         // Deletar tabela de Patio
         // patioService.deletarTabelaPatio();
 

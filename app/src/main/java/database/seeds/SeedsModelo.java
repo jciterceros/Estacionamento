@@ -1,9 +1,9 @@
 package database.seeds;
 
-import services.ModeloService;
+import repositories.ModeloRepository;
 
 public class SeedsModelo {
-    public SeedsModelo(ModeloService modeloService) {
+    public SeedsModelo(ModeloRepository modeloService) {
         // Deletar tabela de Modelo
         // modeloService.deletarTabelaModelo();
 

@@ -1,115 +1,97 @@
 package services;
 
-import database.DatabaseManager;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Date;
+import java.util.List;
+import java.util.Scanner;
+
+import entities.Cliente;
+import repositories.ClienteRepository;
 
 public class ClienteService {
 
-    private DatabaseManager dbManager;
-
-    public ClienteService(DatabaseManager dbManager) {
-        this.dbManager = dbManager;
+    // Ler dados do Cliente
+    public static Cliente LerDadosCliente(Scanner sc) {
+        System.out.println("");
+        System.out.println("Digite o CPF do Cliente: ");
+        Long cpf = sc.nextLong();
+        sc.nextLine();
+        System.out.println("Digite o Nome do Cliente: ");
+        String nome = sc.nextLine();
+        System.out.println("Digite a Data de Nascimento do Cliente: ");
+        String dtNasc = sc.nextLine();
+        return new Cliente(cpf, nome, Date.valueOf(dtNasc));
     }
 
-    public void criarTabelaCliente() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("CREATE TABLE IF NOT EXISTS Cliente (")
-                    .append("cpf BIGINT PRIMARY KEY, ")
-                    .append("nome VARCHAR(60) NOT NULL, ")
-                    .append("dtNasc DATE NOT NULL")
-                    .append(")");
+    // Cadastrar Cliente
+    public static void CadastrarCliente(Scanner sc, List<Cliente> clientes, ClienteRepository clienteRepository) {
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Tabela Cliente criada com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao criar tabela Cliente: " + ex.getMessage(), ex);
+        Cliente inputDadosCliente = LerDadosCliente(sc);
+
+        if (!isClienteCadastrado(clientes, inputDadosCliente.getCpf())) {
+            clientes.add(inputDadosCliente);
+            clientes.forEach(cliente -> {
+                if (cliente.getCpf().equals(inputDadosCliente.getCpf())) {
+                    System.out.printf("CPF: %d, Nome: %s, Data de Nascimento: %s\n", cliente.getCpf(),
+                            cliente.getNome(), cliente.getDtNasc());
+                }
+            });
+            clienteRepository.inserirCliente(inputDadosCliente.getCpf(), inputDadosCliente.getNome(),
+                    inputDadosCliente.getDtNasc().toString());
+            System.out.println("Cliente cadastrado com sucesso");
+        } else {
+            System.out.println("Cliente já cadastrado");
         }
     }
 
-    public void deletarTabelaCliente() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DROP TABLE IF EXISTS Cliente");
+    // Listar Clientes
+    public static void ListarClientes(List<Cliente> clientes) {
+        System.out.println("");
+        System.out.println("Listando Clientes");
+        clientes.forEach(cliente -> System.out.println(cliente.toString()));
+    }
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Tabela Cliente deletada com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar tabela Cliente: " + ex.getMessage(), ex);
+    // Atualizar Cliente
+    public static void AtualizarCliente(Scanner sc, List<Cliente> clientes, ClienteRepository clienteRepository) {
+
+        Cliente inputDadosCliente = LerDadosCliente(sc);
+
+        if (isClienteCadastrado(clientes, inputDadosCliente.getCpf())) {
+            // Atualiza um cliente na lista de clientes
+            clientes.forEach(cliente -> {
+                if (cliente.getCpf().equals(inputDadosCliente.getCpf())) {
+                    cliente.setNome(inputDadosCliente.getNome());
+                    cliente.setDtNasc(inputDadosCliente.getDtNasc());
+                    System.out.printf("CPF: %d, Nome: %s, Data de Nascimento: %s\n", cliente.getCpf(),
+                            cliente.getNome(), cliente.getDtNasc());
+                }
+            });
+            clienteRepository.atualizarCliente(inputDadosCliente.getCpf(), inputDadosCliente.getNome(),
+                    inputDadosCliente.getDtNasc().toString());
+            System.out.println("Cliente Atualizado com sucesso");
+        } else {
+            System.out.println("Cliente não cadastrado");
         }
     }
 
-    public void inserirCliente(Long cpf, String nome, String dtNasc) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("INSERT INTO Cliente (cpf, nome, dtNasc) VALUES (")
-                    .append(cpf).append(", '")
-                    .append(nome).append("', '")
-                    .append(dtNasc).append("')");
+    // Deletar Cliente
+    public static void DeletarCliente(Scanner sc, List<Cliente> clientes, ClienteRepository clienteRepository) {
+        System.out.println("");
+        System.out.println("Digite o CPF do Cliente: ");
+        Long cpf = sc.nextLong();
+        sc.nextLine();
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Cliente inserido com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao inserir cliente: " + ex.getMessage(), ex);
+        if (isClienteCadastrado(clientes, cpf)) {
+            // Deleta um cliente da lista de clientes
+            clientes.removeIf(cliente -> cliente.getCpf().equals(cpf));
+            clienteRepository.deletarClienteByCPF(cpf);
+            System.out.println("Cliente Deletado com sucesso");
+        } else {
+            System.out.println("Cliente não cadastrado");
         }
     }
 
-    public void deletarClienteByCPF(Long cpf) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DELETE FROM Cliente WHERE cpf = ").append(cpf);
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Cliente deletado com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar cliente: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void atualizarCliente(Long cpf, String nome, String dtNasc) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("UPDATE Cliente SET nome = '").append(nome)
-                    .append("', dtNasc = '").append(dtNasc)
-                    .append("' WHERE cpf = ").append(cpf);
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Cliente atualizado com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao atualizar cliente: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void listarClientes() throws SQLException {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("SELECT * FROM Cliente");
-
-            ResultSet resultSet = dbManager.executeQuery(querySQL.toString());
-            while (resultSet.next()) {
-                long cpf = resultSet.getLong("cpf");
-                String nome = resultSet.getString("nome");
-                Date dtNasc = resultSet.getDate("dtNasc");
-
-                System.out.println("CPF: " + cpf + ", Nome: " + nome + ", Data de Nascimento: " + dtNasc);
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao executar a consulta SQL: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void deletarTodosClientes() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DELETE FROM Cliente");
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Todos os clientes foram deletados com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar todos os clientes: " + ex.getMessage(), ex);
-        }
+    // Verifica se existe o Cliente
+    public static boolean isClienteCadastrado(List<Cliente> clientes, Long cpf) {
+        return clientes.stream().anyMatch(cliente -> cliente.getCpf().equals(cpf));
     }
 }

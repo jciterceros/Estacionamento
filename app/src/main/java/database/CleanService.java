@@ -1,10 +1,10 @@
 package database;
 
-import services.ClienteService;
-import services.EstacionaService;
-import services.ModeloService;
-import services.PatioService;
-import services.VeiculoService;
+import repositories.ClienteRepository;
+import repositories.EstacionaRepository;
+import repositories.ModeloRepository;
+import repositories.PatioRepository;
+import repositories.VeiculoRepository;
 
 public class CleanService {
 
@@ -16,11 +16,11 @@ public class CleanService {
 
     // Deletar todas as tabelas
     public void deletarTodasTabelas() {
-        ClienteService clienteService = new ClienteService(dbManager);
-        ModeloService modeloService = new ModeloService(dbManager);
-        PatioService patioService = new PatioService(dbManager);
-        VeiculoService veiculoService = new VeiculoService(dbManager);
-        EstacionaService estacionaService = new EstacionaService(dbManager);
+        ClienteRepository clienteService = new ClienteRepository(dbManager);
+        ModeloRepository modeloService = new ModeloRepository(dbManager);
+        PatioRepository patioService = new PatioRepository(dbManager);
+        VeiculoRepository veiculoService = new VeiculoRepository(dbManager);
+        EstacionaRepository estacionaService = new EstacionaRepository(dbManager);
 
         estacionaService.deletarTodosEstaciona();
         estacionaService.deletarTabelaEstaciona();

@@ -1,9 +1,9 @@
 package database.seeds;
 
-import services.VeiculoService;
+import repositories.VeiculoRepository;
 
 public class SeedsVeiculo {
-    public SeedsVeiculo(VeiculoService veiculoService) {
+    public SeedsVeiculo(VeiculoRepository veiculoService) {
         // Deletar tabela de Veiculo
         // veiculoService.deletarTabelaVeiculo();
 

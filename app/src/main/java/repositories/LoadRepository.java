@@ -1,4 +1,4 @@
-package services;
+package repositories;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -13,11 +13,11 @@ import entities.Modelo;
 import entities.Patio;
 import entities.Veiculo;
 
-public class LoadService {
+public class LoadRepository {
 
     private DatabaseManager dbManager;
 
-    public LoadService(DatabaseManager dbManager) {
+    public LoadRepository(DatabaseManager dbManager) {
         this.dbManager = dbManager;
     }
 

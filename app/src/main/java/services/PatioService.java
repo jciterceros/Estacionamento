@@ -1,113 +1,96 @@
 package services;
 
-import database.DatabaseManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
+import java.util.Scanner;
+
+import entities.Patio;
+import repositories.PatioRepository;
 
 public class PatioService {
 
-    private DatabaseManager dbManager;
-
-    public PatioService(DatabaseManager dbManager) {
-        this.dbManager = dbManager;
+    // Ler dados do Patio
+    public static Patio LerDadosPatio(Scanner sc) {
+        System.out.println("");
+        System.out.println("Digite o Numero do Patio: ");
+        Integer numPatio = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Digite o Endereco do Patio: ");
+        String enderPatio = sc.nextLine();
+        System.out.println("Digite a Capacidade do Patio: ");
+        Integer capacidadePatio = sc.nextInt();
+        return new Patio(numPatio, enderPatio, capacidadePatio);
     }
 
-    public void criarTabelaPatio() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("CREATE TABLE IF NOT EXISTS Patio (")
-                    .append("num INTEGER PRIMARY KEY, ")
-                    .append("ender VARCHAR(40) NOT NULL, ")
-                    .append("capacidade INTEGER NOT NULL")
-                    .append(")");
+    // Cadastrar Patio
+    public static void CadastrarPatio(Scanner sc, List<Patio> patios, PatioRepository patioRepository) {
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Tabela Patio criada com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao criar tabela Patio: " + ex.getMessage(), ex);
+        Patio inputDadosPatio = LerDadosPatio(sc);
+
+        if (!isPatioCadastrado(patios, inputDadosPatio.getNum())) {
+            patios.add(inputDadosPatio);
+            patios.forEach(patio -> {
+                if (patio.getNum().equals(inputDadosPatio.getNum())) {
+                    System.out.printf("Numero: %d, Endereco: %s, Capacidade: %d\n", patio.getNum(), patio.getEnder(),
+                            patio.getCapacidade());
+                }
+            });
+            patioRepository.inserirPatio(inputDadosPatio.getNum(), inputDadosPatio.getEnder(),
+                    inputDadosPatio.getCapacidade());
+            System.out.println("Patio cadastrado com sucesso");
+        } else {
+            System.out.println("Patio já cadastrado");
         }
     }
 
-    public void deletarTabelaPatio() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DROP TABLE IF EXISTS Patio");
+    // Listar Patios
+    public static void ListarPatios(List<Patio> patios) {
+        System.out.println("");
+        System.out.println("Listando Patios");
+        patios.forEach(patio -> System.out.println(patio.toString()));
+    }
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Tabela Patio deletada com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar tabela Patio: " + ex.getMessage(), ex);
+    // Atualizar Patio
+    public static void AtualizarPatio(Scanner sc, List<Patio> patios, PatioRepository patioRepository) {
+
+        Patio inputDadosPatio = LerDadosPatio(sc);
+
+        if (isPatioCadastrado(patios, inputDadosPatio.getNum())) {
+            // Atualiza um patio na lista de patios
+            patios.forEach(patio -> {
+                if (patio.getNum().equals(inputDadosPatio.getNum())) {
+                    patio.setEnder(inputDadosPatio.getEnder());
+                    patio.setCapacidade(inputDadosPatio.getCapacidade());
+                    System.out.printf("Numero: %d, Endereco: %s, Capacidade: %d\n", patio.getNum(), patio.getEnder(),
+                            patio.getCapacidade());
+                }
+            });
+            patioRepository.atualizarPatio(inputDadosPatio.getNum(), inputDadosPatio.getEnder(),
+                    inputDadosPatio.getCapacidade());
+            System.out.println("Patio atualizado com sucesso");
+        } else {
+            System.out.println("Patio não cadastrado");
         }
     }
 
-    public void inserirPatio(Integer num, String ender, Integer capacidade) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("INSERT INTO Patio (num, ender, capacidade) VALUES (")
-                    .append(num).append(", '")
-                    .append(ender).append("', ")
-                    .append(capacidade).append(")");
+    // Deletar Patio
+    public static void DeletarPatio(Scanner sc, List<Patio> patios, PatioRepository patioRepository) {
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Patio inserido com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao inserir patio: " + ex.getMessage(), ex);
+        System.out.println("");
+        System.out.println("Digite o Numero do Patio que deseja deletar: ");
+        Integer numPatio = sc.nextInt();
+
+        if (isPatioCadastrado(patios, numPatio)) {
+            // Deleta um patio na lista de patios
+            patios.removeIf(patio -> patio.getNum().equals(numPatio));
+            patioRepository.deletarPatioByNum(numPatio);
+            System.out.println("Patio deletado com sucesso");
+        } else {
+            System.out.println("Patio não cadastrado");
         }
     }
 
-    public void listarPatios() throws SQLException {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("SELECT * FROM Patio");
-
-            ResultSet resultSet = dbManager.executeQuery(querySQL.toString());
-            while (resultSet.next()) {
-                int num = resultSet.getInt("num");
-                String ender = resultSet.getString("ender");
-                int capacidade = resultSet.getInt("capacidade");
-
-                System.out.println("Numero do Patio: " + num + ", Endereco: " + ender + ", Capacidade: " + capacidade);
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao executar a consulta SQL: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void deletarPatioByNum(Integer num) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DELETE FROM Patio WHERE num = ").append(num);
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Patio deletado com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar patio: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void atualizarPatio(Integer num, String ender, Integer capacidade) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("UPDATE Patio SET ender = '").append(ender)
-                    .append("', capacidade = ").append(capacidade)
-                    .append(" WHERE num = ").append(num);
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Patio atualizado com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao atualizar patio: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void deletarTodosPatios() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DELETE FROM Patio");
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Todos os Patios foram deletados com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar todos os patios: " + ex.getMessage(), ex);
-        }
+    // Verifica se o Patio já está cadastrado
+    public static boolean isPatioCadastrado(List<Patio> patios, Integer num) {
+        return patios.stream().anyMatch(patio -> patio.getNum().equals(num));
     }
 }

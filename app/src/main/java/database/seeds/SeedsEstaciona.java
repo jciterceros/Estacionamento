@@ -1,9 +1,9 @@
 package database.seeds;
 
-import services.EstacionaService;
+import repositories.EstacionaRepository;
 
 public class SeedsEstaciona {
-    public SeedsEstaciona(EstacionaService estacionaService) {
+    public SeedsEstaciona(EstacionaRepository estacionaService) {
         // Deletar tabela de Estaciona
         // estacionaService.deletarTabelaEstaciona();
 

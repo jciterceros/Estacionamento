@@ -16,85 +16,92 @@ import entities.Estaciona;
 import entities.Modelo;
 import entities.Patio;
 import entities.Veiculo;
-
-import java.sql.SQLException;
-import java.util.List;
-
+import repositories.ClienteRepository;
+import repositories.EstacionaRepository;
+import repositories.LoadRepository;
+import repositories.ModeloRepository;
+import repositories.PatioRepository;
+import repositories.VeiculoRepository;
 import services.ClienteService;
-import services.EstacionaService;
-import services.LoadService;
 import services.ModeloService;
 import services.PatioService;
 import services.VeiculoService;
 
+import java.sql.SQLException;
+import java.sql.Date;
+import java.util.List;
+
+import java.util.Scanner;
+// import java.io.IOException;
+// import java.util.NoSuchElementException;
+
+import views.MenuView;
+
 public class App {
 
-    public String getGreeting() {
+    public static ClienteRepository clienteRepository;
+    public static ModeloRepository modeloRepository;
+    public static PatioRepository patioRepository;
+    public static VeiculoRepository veiculoRepository;
+    public static EstacionaRepository estacionaRepository;
+    public static LoadRepository loadRepository;
+    // public static DatabaseManager dbManager;
+    public static List<Cliente> clientes;
+    public static List<Modelo> modelos;
+    public static List<Patio> patios;
+    public static List<Veiculo> veiculos;
+    public static List<Estaciona> estacionamentos;
+
+    // public static Scanner scanner = new Scanner(System.in); // Criando um objeto
+    // Scanner
+    // public static int opcaoMenuPrincipal = 0;
+
+    public static String getGreeting() {
         return "Seja bem-vindo ao Sistema de Estacionamento de vehiculos";
     }
 
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new App().getGreeting());
+    // Funcao carrega os Seeds
+    public static void carregarSeeds() {
+        // Inicialização os Seeds
+        SeedsCliente seedsCliente = new SeedsCliente(clienteRepository);
+        SeedsModelo seedsModelo = new SeedsModelo(modeloRepository);
+        SeedsPatio seedsPatio = new SeedsPatio(patioRepository);
+        SeedsVeiculo seedsVeiculo = new SeedsVeiculo(veiculoRepository);
+        SeedsEstaciona seedsEstaciona = new SeedsEstaciona(estacionaRepository);
+    }
 
-        // Configuração do banco de dados
-        DatabaseConfig config = new DatabaseConfig("localhost", "5433", "Estacionamento", "postgres", "postgres");
-
-        // Inicialização do gerenciador do banco de dados
-        DatabaseManager dbManager = new DatabaseManager(config);
-
-        // Deletar todas as tabelas, Inicializar tudo do Zero
-        CleanService cleanService = new CleanService(dbManager);
-        cleanService.deletarTodasTabelas();
-
-        // Inicialização do serviço Cliente
-        ClienteService clienteService = new ClienteService(dbManager);
-        SeedsCliente seedsCliente = new SeedsCliente(clienteService);
-
-        // Inicialização do serviço Modelo
-        ModeloService modeloService = new ModeloService(dbManager);
-        SeedsModelo seedsModelo = new SeedsModelo(modeloService);
-
-        // Inicialização do serviço Patio
-        PatioService patioService = new PatioService(dbManager);
-        SeedsPatio seedsPatio = new SeedsPatio(patioService);
-
-        // Inicialização do serviço Veiculo
-        VeiculoService veiculoService = new VeiculoService(dbManager);
-        SeedsVeiculo seedsVeiculo = new SeedsVeiculo(veiculoService);
-
-        // Inicialização do serviço Estacionamento
-        EstacionaService estacionaService = new EstacionaService(dbManager);
-        SeedsEstaciona seedsEstaciona = new SeedsEstaciona(estacionaService);
-
-        LoadService loadService = new LoadService(dbManager);
-
-        // Carregando dados dos Clientes direto do banco de dados utilizando LoadService
-        List<Cliente> clientes = null;
-        clientes = loadService.loadClientes();
+    // Funcao Carrega os dados do banco de dados
+    public static void carregarDados() throws SQLException {
+        // Carregando dados dos Clientes direto do banco de dados utilizando
+        // LoadService
+        // List<Cliente> clientes = null;
+        clientes = loadRepository.loadClientes();
 
         clientes.forEach(cliente -> {
             System.out.println(cliente);
         });
 
-        // Carregando dados dos Modelos direto do banco de dados utilizando LoadService
-        List<Modelo> modelos = null;
-        modelos = loadService.loadModelos();
+        // Carregando dados dos Modelos direto do banco de dados utilizando
+        // LoadService
+        // List<Modelo> modelos = null;
+        modelos = loadRepository.loadModelos();
 
         modelos.forEach(modelo -> {
             System.out.println(modelo);
         });
 
         // Carregar dados dos Patios direto do banco de dados utilizando LoadService
-        List<Patio> patios = null;
-        patios = loadService.loadPatios();
+        // List<Patio> patios = null;
+        patios = loadRepository.loadPatios();
 
         patios.forEach(patio -> {
             System.out.println(patio);
         });
 
-        // Carregar dados dos Veiculos direto do banco de dados utilizando LoadService
-        List<Veiculo> veiculos = null;
-        veiculos = loadService.loadVeiculos(clientes, modelos);
+        // Carregar dados dos Veiculos direto do banco de dados utilizando
+        // LoadService
+        // List<Veiculo> veiculos = null;
+        veiculos = loadRepository.loadVeiculos(clientes, modelos);
 
         veiculos.forEach(veiculo -> {
             System.out.println(veiculo);
@@ -102,14 +109,213 @@ public class App {
 
         // Carregar dados do Estacionamento direto do banco de dados utilizando
         // LoadService
-        List<Estaciona> estacionamentos = null;
-        estacionamentos = loadService.loadEstaciona(veiculos, patios);
+        // List<Estaciona> estacionamentos = null;
+        estacionamentos = loadRepository.loadEstaciona(veiculos, patios);
 
         estacionamentos.forEach(estaciona -> {
             System.out.println(estaciona);
         });
+    }
 
-        dbManager.disconnect();
-        System.out.println("Saindo da aplicacao volte novamente...");
+    public static void main(String[] args) {// throws SQLException, IOException {
+
+        // try {
+
+        Scanner sc = new Scanner(System.in); // Criando um objeto Scanner
+
+        System.out.println(getGreeting());// (new App().getGreeting());
+
+        // Configuração do banco de dados
+        DatabaseConfig config = new DatabaseConfig("localhost", "5433",
+                "Estacionamento", "postgres", "postgres");
+
+        // Inicialização do gerenciador do banco de dados
+        DatabaseManager dbManager = new DatabaseManager(config);
+
+        // Instaciando os serviços
+        clienteRepository = new ClienteRepository(dbManager);
+        modeloRepository = new ModeloRepository(dbManager);
+        patioRepository = new PatioRepository(dbManager);
+        veiculoRepository = new VeiculoRepository(dbManager);
+        estacionaRepository = new EstacionaRepository(dbManager);
+
+        // Deletar todas as tabelas, Inicializar tudo do Zero
+        // CleanService cleanService = new CleanService(dbManager);
+        // cleanService.deletarTodasTabelas();
+
+        // // Inicialização os Seeds
+        // carregarSeeds();
+
+        // Inicialização do LoadService
+        loadRepository = new LoadRepository(dbManager);
+
+        // Carregar os dados do banco de dados
+        try {
+            carregarDados();
+        } catch (SQLException e) {
+            System.err.println("Erro ao carregar os dados do banco de dados: " +
+                    e.getMessage());
+            e.printStackTrace();
+        } finally {
+            System.out.println("Fim do Programa");
+            // if (dbManager.isConnected()) {
+            // dbManager.disconnect();
+            // }
+        }
+
+        while (true) {
+            // Menu Principal
+            MenuView.menuPrincipal();
+
+            // Selecionando opcao do menu principal
+            int opcaoMenuPrincipal = sc.nextInt();
+            sc.nextLine();
+            switch (opcaoMenuPrincipal) {
+                case 1:
+                    // Menu Clientes
+                    MenuView.menuClientes();
+                    int opcaoMenuCliente = sc.nextInt();
+                    sc.nextLine();
+                    switch (opcaoMenuCliente) {
+                        case 1:
+                            // Cadastrar Cliente
+                            ClienteService.CadastrarCliente(sc, clientes, clienteRepository);
+                            break;
+                        case 2:
+                            // Listar Clientes
+                            ClienteService.ListarClientes(clientes);
+                            break;
+                        case 3:
+                            // Atualizar Cliente
+                            ClienteService.AtualizarCliente(sc, clientes, clienteRepository);
+                            break;
+                        case 4:
+                            // Deletar Cliente
+                            ClienteService.DeletarCliente(sc, clientes, clienteRepository);
+                            break;
+                        case 0:
+                            // Menu Principal
+                            break;
+                        default:
+                            System.out.println("OPCAO INVALIDA");
+                            break;
+                    }
+
+                    break;
+                case 2:
+                    // Menu Modelo
+                    MenuView.menuModelo();
+                    int opcaoMenuModelo = sc.nextInt();
+                    sc.nextLine();
+                    switch (opcaoMenuModelo) {
+                        case 1:
+                            // Cadastrar Modelo
+                            ModeloService.CadastrarModelo(sc, modelos, modeloRepository);
+                            break;
+                        case 2:
+                            // Listar Modelos
+                            ModeloService.ListarModelos(modelos);
+                            break;
+                        case 3:
+                            // Atualizar Modelo
+                            ModeloService.AtualizarModelo(sc, modelos, modeloRepository);
+                            break;
+                        case 4:
+                            // Deletar Modelo
+                            ModeloService.DeletarModelo(sc, modelos, modeloRepository);
+                            break;
+                        case 0:
+                            // Menu Principal
+                            break;
+                        default:
+                            System.out.println("OPCAO INVALIDA");
+                            break;
+                    }
+                    break;
+                case 3:
+                    // Menu Patio
+                    MenuView.menuPatio();
+                    int opcaoMenuPatio = sc.nextInt();
+                    sc.nextLine();
+                    switch (opcaoMenuPatio) {
+                        case 1:
+                            // Cadastrar Patio
+                            PatioService.CadastrarPatio(sc, patios, patioRepository);
+                            break;
+                        case 2:
+                            // Listar Patios
+                            PatioService.ListarPatios(patios);
+                            break;
+                        case 3:
+                            // Atualizar Patio
+                            PatioService.AtualizarPatio(sc, patios, patioRepository);
+                            break;
+                        case 4:
+                            // Deletar Patio
+                            PatioService.DeletarPatio(sc, patios, patioRepository);
+                            break;
+                        case 0:
+                            // Menu Principal
+                            break;
+                        default:
+                            System.out.println("OPCAO INVALIDA");
+                            break;
+                    }
+                    break;
+                case 4:
+                    // Menu Veiculo
+                    MenuView.menuVeiculo();
+                    int opcaoMenuVeiculo = sc.nextInt();
+                    sc.nextLine();
+                    switch (opcaoMenuVeiculo) {
+                        case 1:
+                            // Cadastrar Veiculo
+                            VeiculoService.CadastrarVeiculo(sc, veiculos, veiculoRepository);
+                            break;
+                        case 2:
+                            // Listar Veiculos
+                            VeiculoService.ListarVeiculos(veiculos);
+                            break;
+                        case 3:
+                            // Atualizar Veiculo
+                            VeiculoService.AtualizarVeiculo(sc, veiculos, veiculoRepository);
+                            break;
+                        case 4:
+                            // Deletar Veiculo
+                            VeiculoService.DeletarVeiculo(sc, veiculos, veiculoRepository);
+                            break;
+                        case 0:
+                            // Menu Principal
+                            break;
+                        default:
+                            System.out.println("OPCAO INVALIDA");
+                            break;
+                    }
+                    break;
+                case 5:
+                    // Menu Estacionamento
+                    MenuView.menuEstacionamento();
+                    break;
+                case 0:
+                    // Sair
+                    System.out.println("Saindo do Sistema");
+                    break;
+                default:
+                    System.out.println("OPCAO INVALIDA");
+                    break;
+            }
+            if (opcaoMenuPrincipal == 0) {
+                break;
+            }
+        }
+
+        if (dbManager.isConnected())
+
+        {
+            dbManager.disconnect();
+        }
+        if (sc != null) {
+            sc.close();
+        }
     }
 }

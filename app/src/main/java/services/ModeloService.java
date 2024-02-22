@@ -1,108 +1,91 @@
 package services;
 
-import database.DatabaseManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
+import java.util.Scanner;
+
+import entities.Modelo;
+import repositories.ModeloRepository;
 
 public class ModeloService {
-    private DatabaseManager dbManager;
 
-    public ModeloService(DatabaseManager dbManager) {
-        this.dbManager = dbManager;
+    // Ler dados do Modelo
+    public static Modelo LerDadosModelo(Scanner sc) {
+        System.out.println("");
+        System.out.println("Digite o Codigo do Modelo: ");
+        Integer codMod = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Digite a Descricao do Modelo: ");
+        String Desc_2 = sc.nextLine();
+        return new Modelo(codMod, Desc_2);
     }
 
-    public void criarTabelaModelo() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("CREATE TABLE IF NOT EXISTS Modelo (")
-                    .append("codMod INTEGER PRIMARY KEY, ")
-                    .append("Desc_2 VARCHAR(40) NOT NULL")
-                    .append(")");
+    // Cadastrar Modelo
+    public static void CadastrarModelo(Scanner sc, List<Modelo> modelos, ModeloRepository modeloRepository) {
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Tabela Modelo criada com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao criar tabela Modelo: " + ex.getMessage(), ex);
+        Modelo inputDadosModelo = LerDadosModelo(sc);
+
+        if (!isModeloCadastrado(modelos, inputDadosModelo.getCodMod())) {
+            modelos.add(inputDadosModelo);
+            modelos.forEach(modelo -> {
+                if (modelo.getCodMod().equals(inputDadosModelo.getCodMod())) {
+                    System.out.printf("Codigo: %d, Descricao: %s\n", modelo.getCodMod(), modelo.getDesc_2());
+                }
+            });
+            modeloRepository.inserirModelo(inputDadosModelo.getCodMod(), inputDadosModelo.getDesc_2());
+            System.out.println("Modelo cadastrado com sucesso");
+        } else {
+            System.out.println("Modelo já cadastrado");
         }
     }
 
-    public void deletarTabelaModelo() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DROP TABLE IF EXISTS Modelo");
+    // Listar Modelos
+    public static void ListarModelos(List<Modelo> modelos) {
+        System.out.println("");
+        System.out.println("Listando Modelos");
+        modelos.forEach(modelo -> System.out.println(modelo.toString()));
+    }
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Tabela Modelo deletada com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar tabela Modelo: " + ex.getMessage(), ex);
+    // Atualizar Modelo
+    public static void AtualizarModelo(Scanner sc, List<Modelo> modelos, ModeloRepository modeloRepository) {
+
+        Modelo inputDadosModelo = LerDadosModelo(sc);
+
+        if (isModeloCadastrado(modelos, inputDadosModelo.getCodMod())) {
+            // Atualiza um modelo na lista de modelos
+            modelos.forEach(modelo -> {
+                if (modelo.getCodMod().equals(inputDadosModelo.getCodMod())) {
+                    modelo.setDesc_2(inputDadosModelo.getDesc_2());
+                    System.out.printf("Codigo: %d, Descricao: %s\n", modelo.getCodMod(), modelo.getDesc_2());
+                }
+            });
+            modeloRepository.atualizarModelo(inputDadosModelo.getCodMod(),
+                    inputDadosModelo.getDesc_2());
+            System.out.println("Modelo atualizado com sucesso");
+        } else {
+            System.out.println("Modelo não cadastrado");
         }
     }
 
-    public void inserirModelo(Integer codMod, String desc_2) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("INSERT INTO Modelo (codMod, Desc_2) VALUES (")
-                    .append(codMod).append(", '")
-                    .append(desc_2).append("')");
+    // Deletar Modelo
+    public static void DeletarModelo(Scanner sc, List<Modelo> modelos, ModeloRepository modeloRepository) {
 
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Modelo inserido com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao inserir modelo: " + ex.getMessage(), ex);
+        System.out.println("");
+        System.out.println("Digite o Codigo do Modelo que deseja deletar: ");
+        Integer codMod = sc.nextInt();
+        sc.nextLine();
+
+        if (isModeloCadastrado(modelos, codMod)) {
+            // Deleta um modelo na lista de modelos
+            modelos.removeIf(modelo -> modelo.getCodMod().equals(codMod));
+            modeloRepository.deletarModeloByCod(codMod);
+            System.out.println("Modelo deletado com sucesso");
+        } else {
+            System.out.println("Modelo não cadastrado");
         }
     }
 
-    public void listarModelos() throws SQLException {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("SELECT * FROM Modelo");
-
-            ResultSet resultSet = dbManager.executeQuery(querySQL.toString());
-            while (resultSet.next()) {
-                int codMod = resultSet.getInt("codMod");
-                String desc_2 = resultSet.getString("Desc_2");
-
-                System.out.println("Codigo do Modelo: " + codMod + ", Descricao: " + desc_2);
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao executar a consulta SQL: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void deletarModeloByCod(Integer codMod) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DELETE FROM Modelo WHERE codMod = ").append(codMod);
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Modelo deletado com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar modelo: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void atualizarModelo(Integer codMod, String desc_2) {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("UPDATE Modelo SET Desc_2 = '").append(desc_2)
-                    .append("' WHERE codMod = ").append(codMod);
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Modelo atualizado com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao atualizar modelo: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void deletarTodosModelos() {
-        try {
-            StringBuilder querySQL = new StringBuilder();
-            querySQL.append("DELETE FROM Modelo");
-
-            dbManager.executeUpdate(querySQL.toString());
-            System.out.println("Todos os modelos foram deletados com sucesso!");
-        } catch (SQLException ex) {
-            throw new RuntimeException("Erro ao deletar todos os modelos: " + ex.getMessage(), ex);
-        }
+    // Verificar se o modelo já está cadastrado
+    public static boolean isModeloCadastrado(List<Modelo> modelos, Integer codMod) {
+        return modelos.stream().anyMatch(modelo -> modelo.getCodMod().equals(codMod));
     }
 }
