@@ -23,6 +23,7 @@ import repositories.ModeloRepository;
 import repositories.PatioRepository;
 import repositories.VeiculoRepository;
 import services.ClienteService;
+import services.EstacionaService;
 import services.ModeloService;
 import services.PatioService;
 import services.VeiculoService;
@@ -32,8 +33,6 @@ import java.sql.Date;
 import java.util.List;
 
 import java.util.Scanner;
-// import java.io.IOException;
-// import java.util.NoSuchElementException;
 
 import views.MenuView;
 
@@ -45,16 +44,11 @@ public class App {
     public static VeiculoRepository veiculoRepository;
     public static EstacionaRepository estacionaRepository;
     public static LoadRepository loadRepository;
-    // public static DatabaseManager dbManager;
     public static List<Cliente> clientes;
     public static List<Modelo> modelos;
     public static List<Patio> patios;
     public static List<Veiculo> veiculos;
     public static List<Estaciona> estacionamentos;
-
-    // public static Scanner scanner = new Scanner(System.in); // Criando um objeto
-    // Scanner
-    // public static int opcaoMenuPrincipal = 0;
 
     public static String getGreeting() {
         return "Seja bem-vindo ao Sistema de Estacionamento de vehiculos";
@@ -72,58 +66,33 @@ public class App {
 
     // Funcao Carrega os dados do banco de dados
     public static void carregarDados() throws SQLException {
-        // Carregando dados dos Clientes direto do banco de dados utilizando
-        // LoadService
-        // List<Cliente> clientes = null;
+
+        // Carregando dados dos Clientes
         clientes = loadRepository.loadClientes();
+        // clientes.forEach(cliente -> System.out.println(cliente));
 
-        clientes.forEach(cliente -> {
-            System.out.println(cliente);
-        });
-
-        // Carregando dados dos Modelos direto do banco de dados utilizando
-        // LoadService
-        // List<Modelo> modelos = null;
+        // Carregando dados dos Modelos
         modelos = loadRepository.loadModelos();
+        // modelos.forEach(modelo -> System.out.println(modelo));
 
-        modelos.forEach(modelo -> {
-            System.out.println(modelo);
-        });
-
-        // Carregar dados dos Patios direto do banco de dados utilizando LoadService
-        // List<Patio> patios = null;
+        // Carregar dados dos Patios
         patios = loadRepository.loadPatios();
+        // patios.forEach(patio -> System.out.println(patio));
 
-        patios.forEach(patio -> {
-            System.out.println(patio);
-        });
-
-        // Carregar dados dos Veiculos direto do banco de dados utilizando
-        // LoadService
-        // List<Veiculo> veiculos = null;
+        // Carregar dados dos Veiculos
         veiculos = loadRepository.loadVeiculos(clientes, modelos);
+        // veiculos.forEach(veiculo -> System.out.println(veiculo));
 
-        veiculos.forEach(veiculo -> {
-            System.out.println(veiculo);
-        });
-
-        // Carregar dados do Estacionamento direto do banco de dados utilizando
-        // LoadService
-        // List<Estaciona> estacionamentos = null;
+        // Carregar dados do Estacionamento
         estacionamentos = loadRepository.loadEstaciona(veiculos, patios);
-
-        estacionamentos.forEach(estaciona -> {
-            System.out.println(estaciona);
-        });
+        // estacionamentos.forEach(estaciona -> System.out.println(estaciona));
     }
 
-    public static void main(String[] args) {// throws SQLException, IOException {
+    public static void main(String[] args) {
 
-        // try {
+        Scanner sc = new Scanner(System.in);
 
-        Scanner sc = new Scanner(System.in); // Criando um objeto Scanner
-
-        System.out.println(getGreeting());// (new App().getGreeting());
+        System.out.println(getGreeting());
 
         // Configuração do banco de dados
         DatabaseConfig config = new DatabaseConfig("localhost", "5433",
@@ -140,27 +109,22 @@ public class App {
         estacionaRepository = new EstacionaRepository(dbManager);
 
         // Deletar todas as tabelas, Inicializar tudo do Zero
-        // CleanService cleanService = new CleanService(dbManager);
         // cleanService.deletarTodasTabelas();
 
-        // // Inicialização os Seeds
+        // Inicialização os Seeds no banco de dados
         // carregarSeeds();
 
-        // Inicialização do LoadService
+        // Instancia do LoadService
         loadRepository = new LoadRepository(dbManager);
 
         // Carregar os dados do banco de dados
         try {
             carregarDados();
+            System.out.println("Dados carregados com sucesso....");
         } catch (SQLException e) {
             System.err.println("Erro ao carregar os dados do banco de dados: " +
                     e.getMessage());
             e.printStackTrace();
-        } finally {
-            System.out.println("Fim do Programa");
-            // if (dbManager.isConnected()) {
-            // dbManager.disconnect();
-            // }
         }
 
         while (true) {
@@ -178,19 +142,15 @@ public class App {
                     sc.nextLine();
                     switch (opcaoMenuCliente) {
                         case 1:
-                            // Cadastrar Cliente
                             ClienteService.CadastrarCliente(sc, clientes, clienteRepository);
                             break;
                         case 2:
-                            // Listar Clientes
                             ClienteService.ListarClientes(clientes);
                             break;
                         case 3:
-                            // Atualizar Cliente
                             ClienteService.AtualizarCliente(sc, clientes, clienteRepository);
                             break;
                         case 4:
-                            // Deletar Cliente
                             ClienteService.DeletarCliente(sc, clientes, clienteRepository);
                             break;
                         case 0:
@@ -209,19 +169,15 @@ public class App {
                     sc.nextLine();
                     switch (opcaoMenuModelo) {
                         case 1:
-                            // Cadastrar Modelo
                             ModeloService.CadastrarModelo(sc, modelos, modeloRepository);
                             break;
                         case 2:
-                            // Listar Modelos
                             ModeloService.ListarModelos(modelos);
                             break;
                         case 3:
-                            // Atualizar Modelo
                             ModeloService.AtualizarModelo(sc, modelos, modeloRepository);
                             break;
                         case 4:
-                            // Deletar Modelo
                             ModeloService.DeletarModelo(sc, modelos, modeloRepository);
                             break;
                         case 0:
@@ -239,19 +195,15 @@ public class App {
                     sc.nextLine();
                     switch (opcaoMenuPatio) {
                         case 1:
-                            // Cadastrar Patio
                             PatioService.CadastrarPatio(sc, patios, patioRepository);
                             break;
                         case 2:
-                            // Listar Patios
                             PatioService.ListarPatios(patios);
                             break;
                         case 3:
-                            // Atualizar Patio
                             PatioService.AtualizarPatio(sc, patios, patioRepository);
                             break;
                         case 4:
-                            // Deletar Patio
                             PatioService.DeletarPatio(sc, patios, patioRepository);
                             break;
                         case 0:
@@ -269,19 +221,15 @@ public class App {
                     sc.nextLine();
                     switch (opcaoMenuVeiculo) {
                         case 1:
-                            // Cadastrar Veiculo
-                            VeiculoService.CadastrarVeiculo(sc, veiculos, veiculoRepository);
+                            VeiculoService.CadastrarVeiculo(sc, veiculos, modelos, clientes, veiculoRepository);
                             break;
                         case 2:
-                            // Listar Veiculos
                             VeiculoService.ListarVeiculos(veiculos);
                             break;
                         case 3:
-                            // Atualizar Veiculo
-                            VeiculoService.AtualizarVeiculo(sc, veiculos, veiculoRepository);
+                            VeiculoService.AtualizarVeiculo(sc, veiculos, modelos, clientes, veiculoRepository);
                             break;
                         case 4:
-                            // Deletar Veiculo
                             VeiculoService.DeletarVeiculo(sc, veiculos, veiculoRepository);
                             break;
                         case 0:
@@ -295,6 +243,28 @@ public class App {
                 case 5:
                     // Menu Estacionamento
                     MenuView.menuEstacionamento();
+                    int opcaoMenuEstacionamento = sc.nextInt();
+                    sc.nextLine();
+                    switch (opcaoMenuEstacionamento) {
+                        case 1:
+                            EstacionaService.CadastrarEstaciona(sc, estacionamentos, estacionaRepository);
+                            break;
+                        case 2:
+                            EstacionaService.ListarEstacionas(estacionamentos);
+                            break;
+                        case 3:
+                            EstacionaService.AtualizarEstaciona(sc, estacionamentos, estacionaRepository);
+                            break;
+                        case 4:
+                            EstacionaService.DeletarEstaciona(sc, estacionamentos, estacionaRepository);
+                            break;
+                        case 0:
+                            // Menu Principal
+                            break;
+                        default:
+                            System.out.println("OPCAO INVALIDA");
+                            break;
+                    }
                     break;
                 case 0:
                     // Sair
